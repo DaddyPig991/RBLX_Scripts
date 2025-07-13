@@ -1,69 +1,65 @@
 Unloaded = false
 
-local Workspace = game:GetService("Workspace")
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local UserInputService = game:GetService("UserInputService")
+local CollectionService = game:GetService("CollectionService")
+local ProximityPromptService = game:GetService("ProximityPromptService")
+local LocalPlayer = Players.LocalPlayer
+local Ragdoll = ReplicatedStorage:WaitForChild("Events"):WaitForChild("Player"):WaitForChild("Ragdoll")
+local DebrisFolder = workspace:WaitForChild("Debris")
+local HitChance = 100
+
+local Aiming = loadstring(game:HttpGet("https://raw.githubusercontent.com/DaddyPig991/RBLX_Scripts/refs/heads/main/Aiming.lua"))()
+
+Aiming.Enabled = true
+Aiming.FOV = 180
+Aiming.FOVColor = Color3.fromRGB(255, 255, 255)
+Aiming.NPCs = true
+Aiming.Players = false
+
+local Collection = {}
+function Collect(Item : RBXScriptConnection | thread)
+	table.insert(Collection, Item)
+end
+
+local NPCs = workspace:WaitForChild("NPCs"):WaitForChild("Custom")
+local FastCast = require(ReplicatedStorage.Mods.FastCast)
 
 local Remotes = {
-	MinigameResult = ReplicatedStorage.Events.Loot.MinigameResult,
-	LootObject = ReplicatedStorage.Events.Loot.LootObject,
-	Buy = ReplicatedStorage.Events.Stations.Buy,
-	Minigame = ReplicatedStorage.Events.Loot.Minigame,
-	Swing = ReplicatedStorage.MeleeStorage.Events.Swing,
-	MeleeHit = ReplicatedStorage.MeleeStorage.Events.Hit,
+	GunShoot = ReplicatedStorage.GunStorage.Events.Shoot,
 	GunHit = ReplicatedStorage.GunStorage.Events.Hit,
-	DialogEvent = ReplicatedStorage.Events.Dialogue.Event,
-	TransferCurrency = ReplicatedStorage.Events.Stash.TransferCurrency
 }
 
-local Camera = Workspace.CurrentCamera
-local WorldToScreen = Camera.WorldToScreenPoint
-local GetMouseLocation = UserInputService.GetMouseLocation
+local Limbs = {
+	"Head",
+	"Torso"
+}
 
-local enemyFolder = Workspace:WaitForChild("NPCs"):WaitForChild("Custom")
-
--- SAFE Mouse Position
-local function safeGetMouseLocation()
-	return GetMouseLocation(UserInputService)
+local function Miss()
+	return (math.random(0, 100) > HitChance)
 end
 
--- SAFE World to Screen
-local function safeWorldToScreenPoint(worldPos)
-	local screenPos, onScreen = WorldToScreen(Camera, worldPos)
-	return Vector2.new(screenPos.X, screenPos.Y), onScreen
-end
+local function GetClosest(Instances : {Model | BasePart}, Position : Vector3)
+	local Closest = nil
+	local ClosestDistance = math.huge
 
--- Closest Zombie
-local function getClosestZombie()
-	local mousePos = safeGetMouseLocation()
-	local closestDist = math.huge
-	local closestEnemy = nil
-
-	for _, enemy in pairs(enemyFolder:GetChildren()) do
-		local head = enemy:FindFirstChild("Head")
-		local humanoid = enemy:FindFirstChild("Humanoid")
-
-		if head and humanoid and humanoid.Health > 0 then
-			local screenPos, onScreen = safeWorldToScreenPoint(head.Position)
-			if onScreen then
-				local dist = (mousePos - screenPos).Magnitude
-				if dist < closestDist then
-					closestDist = dist
-					closestEnemy = head
-				end
-			end
+	for _, Object in ipairs(Instances) do
+		local InstancePosition = Object:GetPivot().Position
+		local Distance = (InstancePosition - Position).Magnitude
+		if Distance < ClosestDistance then
+			Closest = Object
+			ClosestDistance = Distance
 		end
 	end
 
-	if closestEnemy then
-		print("✅ Found closest enemy:", closestEnemy.Parent.Name)
-	end
-
-	return closestEnemy
+	return Closest, ClosestDistance
 end
 
--- HOOK
+Collect(ProximityPromptService.PromptButtonHoldBegan:Connect(function(ProximityPrompt : ProximityPrompt)
+	fireproximityprompt(ProximityPrompt)
+end))
+
 local OldNamecall; OldNamecall = hookmetamethod(game, "__namecall", function(self, ...)
 
 	if not Unloaded then
@@ -73,12 +69,16 @@ local OldNamecall; OldNamecall = hookmetamethod(game, "__namecall", function(sel
 
 			if Method == "FireServer" then
 				if self.Name == "Shoot" then
-					task.delay(0.1, function()
-						Remotes.GunHit:FireServer(
-							Aiming.CurrentTarget[Options.SilentAimParts.Value],
-							Args[6]
-						)
-					end)
+					if Aiming.CurrentTarget then
+						if not shared.MissNextShot then
+							task.delay(0.1, function()
+								Remotes.GunHit:FireServer(
+									Aiming.CurrentTarget["Head"],
+									Args[6]
+								)
+							end)
+						end
+					end
 				end
 			end
 		end
@@ -86,3 +86,32 @@ local OldNamecall; OldNamecall = hookmetamethod(game, "__namecall", function(sel
 
 	return OldNamecall(self, ...)
 end)
+
+local FireHook
+
+local OldFire; OldFire = hookfunction(FastCast.Fire, function(...)
+	return FireHook(...)
+end)
+
+FireHook = function(...)
+
+	if not Unloaded then
+		local Args = {...}
+		local Caller = getcallingscript()
+
+		if tostring(Caller) == "GunHandler" then
+
+			shared.MissNextShot = Miss()
+
+			if not shared.MissNextShot then
+				if Aiming.CurrentTarget then
+					Args[3] = (Aiming.CurrentTarget["Head"].Position - Args[2])
+				end
+			end
+
+			return OldFire(unpack(Args))
+		end
+	end
+
+	return OldFire(...)
+end
