@@ -13,7 +13,7 @@ local HitChance = 100
 local Aiming = loadstring(game:HttpGet("https://raw.githubusercontent.com/DaddyPig991/RBLX_Scripts/refs/heads/main/Aiming.lua"))()
 
 Aiming.Enabled = true
-Aiming.FOV = 1000
+Aiming.FOV = 180
 Aiming.FOVColor = Color3.fromRGB(255, 255, 255)
 Aiming.NPCs = true
 Aiming.Players = false
