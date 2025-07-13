@@ -13,7 +13,7 @@ local HitChance = 100
 local Aiming = loadstring(game:HttpGet("https://raw.githubusercontent.com/DaddyPig991/RBLX_Scripts/refs/heads/main/Aiming.lua"))()
 
 Aiming.Enabled = true
-Aiming.FOV = 180
+Aiming.FOV = 1000
 Aiming.FOVColor = Color3.fromRGB(255, 255, 255)
 Aiming.NPCs = true
 Aiming.Players = false
@@ -23,7 +23,6 @@ function Collect(Item : RBXScriptConnection | thread)
 	table.insert(Collection, Item)
 end
 
-local NPCs = workspace:WaitForChild("NPCs"):WaitForChild("Custom")
 local FastCast = require(ReplicatedStorage.Mods.FastCast)
 
 local Remotes = {
@@ -69,14 +68,13 @@ local OldNamecall; OldNamecall = hookmetamethod(game, "__namecall", function(sel
 
 			if Method == "FireServer" then
 				if self.Name == "Shoot" then
-					if Aiming.CurrentTarget then
-						if not shared.MissNextShot then
-							task.delay(0.1, function()
-								Remotes.GunHit:FireServer(
-									Aiming.CurrentTarget["Head"],
-									Args[6]
-								)
-							end)
+					if Aiming.CurrentTarget and typeof(Aiming.CurrentTarget) == "Instance" and Aiming.CurrentTarget:IsA("Model") then
+						local head = Aiming.CurrentTarget:FindFirstChild("Head")
+						if head and not shared.MissNextShot then			
+							Remotes.GunHit:FireServer(
+								head,
+								Args[6]
+							)
 						end
 					end
 				end
