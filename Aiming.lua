@@ -136,6 +136,11 @@ local Connection = RunService.RenderStepped:Connect(function()
         UpdateFOV()
         local ClosestPlayer, Distance, Position = GetClosestPlayer()
         Aiming.CurrentTarget = ClosestPlayer
+
+        if Aiming.CurrentTarget and not Aiming.CurrentTarget:FindFirstChild("Head") then
+        	Aiming.CurrentTarget = nil
+        end
+        
         if ClosestPlayer then
             FOVTracer.Visible = Aiming.AimTracer
             FOVTracer.From = UserInputService:GetMouseLocation()
