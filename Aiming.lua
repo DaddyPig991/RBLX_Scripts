@@ -70,7 +70,7 @@ local function GetCharactersInViewport() : {{Character: Model, Position: Vector2
     end
 
     if Aiming.NPCs then
-        for _, NPC in next, game:GetService("CollectionService"):GetTagged("NPC") do
+        for _, NPC in next, workspace.NPCs.Custom:GetChildren() do
             if NPC:IsDescendantOf(workspace) and NPC:IsA("Model") and NPC:FindFirstChild("HumanoidRootPart") and game:GetService("CollectionService"):HasTag(NPC, "ActiveCharacter") then
                 table.insert(ToProcess, NPC)
             end
