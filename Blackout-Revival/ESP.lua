@@ -938,4 +938,11 @@ end
 
 CollectionService:GetInstanceAddedSignal("NPC"):Connect(AddNPC)
 
+local function Unload()
+    ESP:DisableESP()
+    ESP:CleanupESP()
+end
+
+ESP.Unload = Unload
+
 return ESP
