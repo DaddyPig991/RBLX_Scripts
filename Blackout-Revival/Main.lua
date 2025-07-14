@@ -7,8 +7,8 @@ local ProximityPromptService = game:GetService("ProximityPromptService")
 
 local LocalPlayer = Players.LocalPlayer
 
-local Aiming = loadstring(game:HttpGet("https://raw.githubusercontent.com/DaddyPig991/RBLX_Scripts/refs/heads/main/Aiming.lua"))()
-local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/DaddyPig991/RBLX_Scripts/refs/heads/main/BlackoutESP.lua"))()
+local Aiming = loadstring(game:HttpGet("https://raw.githubusercontent.com/DaddyPig991/RBLX_Scripts/refs/heads/main/Blackout-Revival/Aiming.lua"))()
+local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/DaddyPig991/RBLX_Scripts/refs/heads/main/Blackout-Revival/ESP.lua"))()
 
 Aiming.Enabled = false
 Aiming.FOV = 180
