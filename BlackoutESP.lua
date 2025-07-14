@@ -385,7 +385,6 @@ local function AddNPC(npc)
             Name = npc.Name,
             PrimaryPart = npc:FindFirstChild("HumanoidRootPart"),
             Color = Color3.fromRGB(255, 50, 50), -- NPC color override
-            IsEnabled = function() return ESP.Enabled end
         })
     end
 end
