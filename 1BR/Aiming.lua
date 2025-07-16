@@ -165,4 +165,6 @@ end
 
 Aiming.Unload = Unload
 
+Aiming.FOVCircle = FOVCircle
+
 return Aiming
