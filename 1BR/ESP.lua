@@ -483,7 +483,7 @@ function ESP:UpdateESP(player)
 		return
 	end
 
-	if self.Settings.TeamCheck and player.Team == LocalPlayer.Team and not self.Settings.ShowTeam then
+	if self.Settings.TeamCheck and game:GetService("CollectionService"):HasTag(character, "ActiveCharacter") and character:GetAttribute("ProtectFromPlayers") and not self.Settings.ShowTeam then
 		for _, obj in pairs(esp.Box) do obj.Visible = false end
 		esp.Tracer.Visible = false
 		for _, obj in pairs(esp.HealthBar) do obj.Visible = false end
