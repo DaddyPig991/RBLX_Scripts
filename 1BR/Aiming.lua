@@ -23,7 +23,7 @@ local Aiming = {
 local InternalFOV = Aiming.FOV
 local FOVCircle = Drawing.new("Circle")
 
-FOVCircle.NumSides = 20
+FOVCircle.NumSides = 150
 FOVCircle.Transparency = 1
 FOVCircle.Thickness = 2
 FOVCircle.Color = Aiming.FOVColor
