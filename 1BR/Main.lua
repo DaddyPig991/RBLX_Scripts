@@ -9,8 +9,8 @@ local CollectionService = game:GetService("CollectionService")
 
 local LocalPlayer = Players.LocalPlayer
 
-local Aiming = loadstring(game:HttpGet("https://raw.githubusercontent.com/DaddyPig991/RBLX_Scripts/refs/heads/main/Blackout-Revival/Aiming.lua"))()
-local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/DaddyPig991/RBLX_Scripts/refs/heads/main/Blackout-Revival/ESP.lua"))()
+local Aiming = loadstring(game:HttpGet("https://raw.githubusercontent.com/DaddyPig991/RBLX_Scripts/refs/heads/main/1BR/Aiming.lua"))()
+local ESP = loadstring(game:HttpGet("https://raw.githubusercontent.com/DaddyPig991/RBLX_Scripts/refs/heads/main/1BR/ESP.lua"))()
 
 Aiming.Enabled = false
 Aiming.FOV = 180
