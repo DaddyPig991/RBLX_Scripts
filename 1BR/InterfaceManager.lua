@@ -6,7 +6,7 @@ local InterfaceManager = {} do
         Theme = "Dark",
         Acrylic = true,
         Transparency = true,
-        MenuKeybind = "Insert"
+        MenuKeybind = Enum.KeyCode.Insert,
     }
 
     function InterfaceManager:SetFolder(folder)
