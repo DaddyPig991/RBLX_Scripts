@@ -10,7 +10,7 @@ local InterfaceManager = {} do
     }
 
     function InterfaceManager:SetFolder(folder)
-		self.Folder = folder;
+		self.Folder = folder
 		self:BuildFolderTree()
 	end
 
@@ -20,7 +20,6 @@ local InterfaceManager = {} do
 
     function InterfaceManager:BuildFolderTree()
 		local paths = {}
-
 		local parts = self.Folder:split("/")
 		for idx = 1, #parts do
 			paths[#paths + 1] = table.concat(parts, "/", 1, idx)
@@ -38,7 +37,11 @@ local InterfaceManager = {} do
 	end
 
     function InterfaceManager:SaveSettings()
-        writefile(self.Folder .. "/options.json", httpService:JSONEncode(InterfaceManager.Settings))
+        local copy = table.clone(self.Settings)
+        if typeof(copy.MenuKeybind) == "EnumItem" then
+            copy.MenuKeybind = copy.MenuKeybind.Name
+        end
+        writefile(self.Folder .. "/options.json", httpService:JSONEncode(copy))
     end
 
     function InterfaceManager:LoadSettings()
@@ -49,7 +52,11 @@ local InterfaceManager = {} do
 
             if success then
                 for i, v in next, decoded do
-                    InterfaceManager.Settings[i] = v
+                    if i == "MenuKeybind" and typeof(v) == "string" then
+                        InterfaceManager.Settings[i] = Enum.KeyCode[v] or Enum.KeyCode.Insert
+                    else
+                        InterfaceManager.Settings[i] = v
+                    end
                 end
             end
         end
@@ -75,7 +82,6 @@ local InterfaceManager = {} do
                 InterfaceManager:SaveSettings()
 			end
 		})
-
         InterfaceTheme:SetValue(Settings.Theme)
 	
 		if Library.UseAcrylic then
@@ -102,7 +108,10 @@ local InterfaceManager = {} do
 			end
 		})
 	
-		local MenuKeybind = section:AddKeybind("MenuKeybind", { Title = "Minimize Bind", Default = Settings.MenuKeybind })
+		local MenuKeybind = section:AddKeybind("MenuKeybind", {
+			Title = "Minimize Bind",
+			Default = Settings.MenuKeybind
+		})
 		MenuKeybind:OnChanged(function()
 			Settings.MenuKeybind = MenuKeybind.Value
             InterfaceManager:SaveSettings()
