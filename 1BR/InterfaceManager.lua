@@ -107,16 +107,23 @@ local InterfaceManager = {} do
                 InterfaceManager:SaveSettings()
 			end
 		})
-	
+
+        -- ✅ Pass .Name (string) as Default to avoid the EnumItem error
 		local MenuKeybind = section:AddKeybind("MenuKeybind", {
 			Title = "Minimize Bind",
-			Default = Settings.MenuKeybind
+			Default = Settings.MenuKeybind.Name
 		})
+
+        -- ✅ Convert back to Enum.KeyCode on change
 		MenuKeybind:OnChanged(function()
-			Settings.MenuKeybind = MenuKeybind.Value
-            InterfaceManager:SaveSettings()
+            local value = MenuKeybind.Value
+			if typeof(value) == "string" then
+                Settings.MenuKeybind = Enum.KeyCode[value] or Enum.KeyCode.Insert
+                InterfaceManager:SaveSettings()
+            end
 		end)
-		Library.MinimizeKeybind = MenuKeybind
+
+        Library.MinimizeKeybind = MenuKeybind
     end
 end
 
