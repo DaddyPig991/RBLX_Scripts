@@ -6,11 +6,11 @@ local InterfaceManager = {} do
         Theme = "Dark",
         Acrylic = true,
         Transparency = true,
-        MenuKeybind = Enum.KeyCode.Insert,
+        MenuKeybind = "Insert",
     }
 
     function InterfaceManager:SetFolder(folder)
-		self.Folder = folder
+		self.Folder = folder;
 		self:BuildFolderTree()
 	end
 
@@ -20,6 +20,7 @@ local InterfaceManager = {} do
 
     function InterfaceManager:BuildFolderTree()
 		local paths = {}
+
 		local parts = self.Folder:split("/")
 		for idx = 1, #parts do
 			paths[#paths + 1] = table.concat(parts, "/", 1, idx)
@@ -37,11 +38,7 @@ local InterfaceManager = {} do
 	end
 
     function InterfaceManager:SaveSettings()
-        local copy = table.clone(self.Settings)
-        if typeof(copy.MenuKeybind) == "EnumItem" then
-            copy.MenuKeybind = copy.MenuKeybind.Name
-        end
-        writefile(self.Folder .. "/options.json", httpService:JSONEncode(copy))
+        writefile(self.Folder .. "/options.json", httpService:JSONEncode(InterfaceManager.Settings))
     end
 
     function InterfaceManager:LoadSettings()
@@ -52,11 +49,7 @@ local InterfaceManager = {} do
 
             if success then
                 for i, v in next, decoded do
-                    if i == "MenuKeybind" and typeof(v) == "string" then
-                        InterfaceManager.Settings[i] = Enum.KeyCode[v] or Enum.KeyCode.Insert
-                    else
-                        InterfaceManager.Settings[i] = v
-                    end
+                    InterfaceManager.Settings[i] = v
                 end
             end
         end
@@ -82,6 +75,7 @@ local InterfaceManager = {} do
                 InterfaceManager:SaveSettings()
 			end
 		})
+
         InterfaceTheme:SetValue(Settings.Theme)
 	
 		if Library.UseAcrylic then
@@ -107,23 +101,13 @@ local InterfaceManager = {} do
                 InterfaceManager:SaveSettings()
 			end
 		})
-
-        -- ✅ Pass .Name (string) as Default to avoid the EnumItem error
-		local MenuKeybind = section:AddKeybind("MenuKeybind", {
-			Title = "Minimize Bind",
-			Default = Settings.MenuKeybind.Name
-		})
-
-        -- ✅ Convert back to Enum.KeyCode on change
+	
+		local MenuKeybind = section:AddKeybind("MenuKeybind", { Title = "Minimize Bind", Default = Settings.MenuKeybind })
 		MenuKeybind:OnChanged(function()
-            local value = MenuKeybind.Value
-			if typeof(value) == "string" then
-                Settings.MenuKeybind = Enum.KeyCode[value] or Enum.KeyCode.Insert
-                InterfaceManager:SaveSettings()
-            end
+			Settings.MenuKeybind = MenuKeybind.Value
+            InterfaceManager:SaveSettings()
 		end)
-
-        Library.MinimizeKeybind = MenuKeybind
+		Library.MinimizeKeybind = MenuKeybind
     end
 end
 
