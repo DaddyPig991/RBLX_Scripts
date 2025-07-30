@@ -33,6 +33,14 @@ local FOVTracer = Drawing.new("Line")
 
 FOVTracer.Thickness = 2
 
+local function GetAimOrigin()
+	if UserInputService.TouchEnabled and not UserInputService.MouseEnabled then
+		return Vector2.new(workspace.Camera.ViewportSize.X / 2, workspace.Camera.ViewportSize.Y / 2)
+	else
+		return UserInputService:GetMouseLocation()
+	end
+end
+
 local function UpdateFOV()
 
     if Aiming.ShowFOV then
@@ -45,7 +53,7 @@ local function UpdateFOV()
         FOVCircle.Visible = true
         FOVCircle.Radius = InternalFOV
         FOVCircle.Color = Aiming.FOVColor
-        FOVCircle.Position = UserInputService:GetMouseLocation()
+        FOVCircle.Position = GetAimOrigin()
     else
         FOVCircle.Visible = false
     end
@@ -92,7 +100,7 @@ local function GetCharactersInViewport() : {{Character: Model, Position: Vector2
 end
 
 local function DistanceFromMouse(Position : Vector2) : number
-    return (UserInputService:GetMouseLocation() - Position).Magnitude
+    return (GetAimOrigin() - Position).Magnitude
 end
 
 local function GetPlayersInFOV() : {{Character: Model, Distance: number, Position: Vector2}}
@@ -143,7 +151,7 @@ local Connection = RunService.RenderStepped:Connect(function()
         
         if ClosestPlayer then
             FOVTracer.Visible = Aiming.AimTracer
-            FOVTracer.From = UserInputService:GetMouseLocation()
+            FOVTracer.From = GetAimOrigin()
             FOVTracer.To = Position
             FOVTracer.Color = Aiming.AimTracerColor
         else
