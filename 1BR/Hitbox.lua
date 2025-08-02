@@ -46,8 +46,6 @@ function Hitbox:RefreshAll()
     for _, npc in ipairs(CollectionService:GetTagged("NPC")) do
         if self.TargetNPC and IsValidNPC(npc) then
             self:UpdateHitbox(npc)
-        else
-            self:RestoreHitbox(npc)
         end
     end
     -- Players
@@ -55,8 +53,6 @@ function Hitbox:RefreshAll()
         if player ~= LocalPlayer and player.Character then
             if self.TargetPlayers then
                 self:UpdateHitbox(player.Character)
-            else
-                self:RestoreHitbox(player.Character)
             end
         end
     end
@@ -84,17 +80,37 @@ end
 -- Connections for runtime
 Players.PlayerAdded:Connect(function(player)
     player.CharacterAdded:Connect(function(character)
-        if Hitbox.TargetPlayers and Hitbox.Enabled then
+        if Hitbox.Enabled and Hitbox.TargetPlayers and character then
             Hitbox:UpdateHitbox(character)
         end
     end)
 end)
 
+for _, player in ipairs(Players:GetPlayers()) do
+    if player ~= LocalPlayer and player.Character then
+        if Hitbox.Enabled and Hitbox.TargetPlayers then
+            Hitbox:UpdateHitbox(player.Character)
+        end
+    end
+    player.CharacterAdded:Connect(function(character)
+        if Hitbox.Enabled and Hitbox.TargetPlayers and character then
+            Hitbox:UpdateHitbox(character)
+        end
+    end)
+end
+
 CollectionService:GetInstanceAddedSignal("NPC"):Connect(function(npc)
-    if Hitbox.TargetNPC and Hitbox.Enabled and IsValidNPC(npc) then
+    if Hitbox.Enabled and Hitbox.TargetNPC and IsValidNPC(npc) then
         Hitbox:UpdateHitbox(npc)
     end
 end)
+
+for _, npc in ipairs(CollectionService:GetTagged("NPC")) do
+    if Hitbox.Enabled and Hitbox.TargetNPC and IsValidNPC(npc) then
+        Hitbox:UpdateHitbox(npc)
+    end
+end
+
 
 -- For initial load
 Hitbox:RefreshAll()
