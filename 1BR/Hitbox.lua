@@ -17,6 +17,8 @@ local Hitbox = {
 
 function Hitbox:UpdateHitbox(model)
     if not self.Enabled then return end
+
+    print("UPDATNG HITBOX")
     local part = model:FindFirstChild(self.CurrentTarget)
     if part and part:IsA("BasePart") then
         if not self.OriginalSizes[part] then
