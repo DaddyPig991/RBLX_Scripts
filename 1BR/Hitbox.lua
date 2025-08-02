@@ -18,13 +18,13 @@ local Hitbox = {
 function Hitbox:UpdateHitbox(model)
     if not self.Enabled then return end
 
-    print("UPDATNG HITBOX")
+    --print("UPDATNG HITBOX")
     local part = model:WaitForChild(self.CurrentTarget)
     if part:IsA("BasePart") then
         if not self.OriginalSizes[part] then
             self.OriginalSizes[part] = part.Size
         end
-        print("EDITING SIZE")
+        --print("EDITING SIZE")
         part.Size = Vector3.new(self.Size, self.Size, self.Size)
         part.Material = Enum.Material.Plastic
         part.Transparency = 0.5
@@ -107,19 +107,19 @@ for _, player in ipairs(Players:GetPlayers()) do
 end
 
 CollectionService:GetInstanceAddedSignal("NPC"):Connect(function(npc)
-    local function tryPatch()
+    local function tryPatch(npc)
         if Hitbox.Enabled and Hitbox.TargetNPC and IsValidNPC(npc) then
             Hitbox:UpdateHitbox(npc)
         end
     end
 
-    tryPatch()
+    tryPatch(npc)
 
     if not npc:FindFirstChild("HumanoidRootPart") then
         local conn
         conn = npc.ChildAdded:Connect(function(child)
             if child.Name == "HumanoidRootPart" then
-                tryPatch()
+                tryPatch(npc)
                 if conn then conn:Disconnect() end
             end
         end)
