@@ -116,9 +116,11 @@ CollectionService:GetInstanceAddedSignal("NPC"):Connect(function(npc)
     tryPatch()
 
     if not npc:FindFirstChild("HumanoidRootPart") then
-        npc.ChildAdded:Connect(function(child)
+        local conn
+        conn = npc.ChildAdded:Connect(function(child)
             if child.Name == "HumanoidRootPart" then
                 tryPatch()
+                if conn then conn:Disconnect() end
             end
         end)
     end
