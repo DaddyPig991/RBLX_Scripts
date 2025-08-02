@@ -220,34 +220,18 @@ local function GetBoxCorners(cf, size)
 	return corners
 end
 
-function IsValidNPC(model)
-    return model:IsDescendantOf(workspace)
-        and model:IsA("Model")
-        and model:FindFirstChild("HumanoidRootPart") ~= nil
-        and CollectionService:HasTag(model, "ActiveCharacter")
-        and not model:GetAttribute("ProtectFromPlayers")
+local function IsValidNPC(model)
+	return model:IsDescendantOf(workspace)
+		and model:IsA("Model")
+		and model:FindFirstChild("HumanoidRootPart")
+		and CollectionService:HasTag(model, "ActiveCharacter")
+		and not model:GetAttribute("ProtectFromPlayers")
 end
 
 local function AddNPC(npc)
-    local function tryAdd(npc)
-        if IsValidNPC(npc) then
-            ESP:CreateESP(npc)
-        end
-    end
-
-    -- Try immediately
-    tryAdd(npc)
-
-    -- Listen for HumanoidRootPart if not present
-    if not npc:FindFirstChild("HumanoidRootPart") then
-        local conn
-        conn = npc.ChildAdded:Connect(function(child)
-            if child.Name == "HumanoidRootPart" then
-                tryAdd(npc)
-                if conn then conn:Disconnect() end
-            end
-        end)
-    end
+	if IsValidNPC(npc) then
+		ESP:CreateESP(npc)
+	end
 end
 
 -- Methods
@@ -270,10 +254,10 @@ function ESP:CreateESP(entity)
 		line.Visible = false
 		line.Color = self.Colors.Enemy
 		line.Thickness = self.Settings.BoxThickness
-		--if line == box.Fill then
-		--	line.Filled = true
-		--	line.Transparency = self.Settings.BoxFillTransparency
-		--end
+		if line == box.Fill then
+			line.Filled = true
+			line.Transparency = self.Settings.BoxFillTransparency
+		end
 	end
 
 	local tracer = Drawing.new("Line")
