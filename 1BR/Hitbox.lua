@@ -108,6 +108,7 @@ end
 
 CollectionService:GetInstanceAddedSignal("NPC"):Connect(function(npc)
     print("GOT NOT FULL MAIL")
+    print(Hitbox.Enabled, Hitbox.TargetNPC, IsValidNPC(npc))
     if Hitbox.Enabled and Hitbox.TargetNPC and IsValidNPC(npc) then
         print("GOT NEW MAIL")
         Hitbox:UpdateHitbox(npc)
