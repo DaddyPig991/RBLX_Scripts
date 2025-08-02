@@ -220,12 +220,12 @@ local function GetBoxCorners(cf, size)
 	return corners
 end
 
-local function IsValidNPC(model)
-	return model:IsDescendantOf(workspace)
-		and model:IsA("Model")
-		and model:FindFirstChild("HumanoidRootPart")
-		and CollectionService:HasTag(model, "ActiveCharacter")
-		and not model:GetAttribute("ProtectFromPlayers")
+function IsValidNPC(model)
+    return model:IsDescendantOf(workspace)
+        and model:IsA("Model")
+        and model:FindFirstChild("HumanoidRootPart") ~= nil
+        and CollectionService:HasTag(model, "ActiveCharacter")
+        and not model:GetAttribute("ProtectFromPlayers")
 end
 
 local function AddNPC(npc)
