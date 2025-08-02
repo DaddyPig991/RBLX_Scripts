@@ -19,11 +19,12 @@ function Hitbox:UpdateHitbox(model)
     if not self.Enabled then return end
 
     print("UPDATNG HITBOX")
-    local part = model:FindFirstChild(self.CurrentTarget)
-    if part and part:IsA("BasePart") then
+    local part = model:WaitForChild(self.CurrentTarget)
+    if part:IsA("BasePart") then
         if not self.OriginalSizes[part] then
             self.OriginalSizes[part] = part.Size
         end
+        print("EDITING SIZE")
         part.Size = Vector3.new(self.Size, self.Size, self.Size)
         part.Material = Enum.Material.Plastic
         part.Transparency = 0.5
@@ -44,15 +45,21 @@ end
 function Hitbox:RefreshAll()
     -- NPCs
     for _, npc in ipairs(CollectionService:GetTagged("NPC")) do
-        if self.TargetNPC and IsValidNPC(npc) then
-            self:UpdateHitbox(npc)
+        if IsValidNPC(npc) then
+            if self.TargetNPC and self.Enabled then
+                self:UpdateHitbox(npc)
+            else
+                self:RestoreHitbox(npc)
+            end
         end
     end
     -- Players
     for _, player in ipairs(Players:GetPlayers()) do
         if player ~= LocalPlayer and player.Character then
-            if self.TargetPlayers then
+            if self.TargetPlayers and self.Enabled then
                 self:UpdateHitbox(player.Character)
+            else
+                self:RestoreHitbox(player.Character)
             end
         end
     end
@@ -101,6 +108,7 @@ end
 
 CollectionService:GetInstanceAddedSignal("NPC"):Connect(function(npc)
     if Hitbox.Enabled and Hitbox.TargetNPC and IsValidNPC(npc) then
+        print("GOT NEW MAIL")
         Hitbox:UpdateHitbox(npc)
     end
 end)
