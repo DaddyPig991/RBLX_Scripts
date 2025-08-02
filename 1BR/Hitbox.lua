@@ -107,6 +107,7 @@ for _, player in ipairs(Players:GetPlayers()) do
 end
 
 CollectionService:GetInstanceAddedSignal("NPC"):Connect(function(npc)
+    print("GOT NOT FULL MAIL")
     if Hitbox.Enabled and Hitbox.TargetNPC and IsValidNPC(npc) then
         print("GOT NEW MAIL")
         Hitbox:UpdateHitbox(npc)
