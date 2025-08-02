@@ -108,7 +108,12 @@ end
 
 CollectionService:GetInstanceAddedSignal("NPC"):Connect(function(npc)
     print("GOT NOT FULL MAIL")
-    print(Hitbox.Enabled, Hitbox.TargetNPC, IsValidNPC(npc))
+    print("IsDescendantOf:", model:IsDescendantOf(workspace))
+    print("IsA Model:", model:IsA("Model"))
+    print("Has HumanoidRootPart:", model:FindFirstChild("HumanoidRootPart"))
+    print("Has ActiveCharacter tag:", CollectionService:HasTag(model, "ActiveCharacter"))
+    print("Has ProtectFromPlayers attribute:", model:GetAttribute("ProtectFromPlayers"))
+
     if Hitbox.Enabled and Hitbox.TargetNPC and IsValidNPC(npc) then
         print("GOT NEW MAIL")
         Hitbox:UpdateHitbox(npc)
