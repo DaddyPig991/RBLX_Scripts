@@ -229,21 +229,21 @@ function IsValidNPC(model)
 end
 
 local function AddNPC(npc)
-    local function tryAdd()
+    local function tryAdd(npc)
         if IsValidNPC(npc) then
             ESP:CreateESP(npc)
         end
     end
 
     -- Try immediately
-    tryAdd()
+    tryAdd(npc)
 
     -- Listen for HumanoidRootPart if not present
     if not npc:FindFirstChild("HumanoidRootPart") then
         local conn
         conn = npc.ChildAdded:Connect(function(child)
             if child.Name == "HumanoidRootPart" then
-                tryAdd()
+                tryAdd(npc)
                 if conn then conn:Disconnect() end
             end
         end)
