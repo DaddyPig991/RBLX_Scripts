@@ -270,10 +270,10 @@ function ESP:CreateESP(entity)
 		line.Visible = false
 		line.Color = self.Colors.Enemy
 		line.Thickness = self.Settings.BoxThickness
-		if line == box.Fill then
-			line.Filled = true
-			line.Transparency = self.Settings.BoxFillTransparency
-		end
+		--if line == box.Fill then
+		--	line.Filled = true
+		--	line.Transparency = self.Settings.BoxFillTransparency
+		--end
 	end
 
 	local tracer = Drawing.new("Line")
