@@ -79,7 +79,7 @@ end
 function IsValidNPC(model)
     return model:IsDescendantOf(workspace)
         and model:IsA("Model")
-        and model:FindFirstChild("HumanoidRootPart")
+        and model:FindFirstChild("HumanoidRootPart") ~= nil
         and CollectionService:HasTag(model, "ActiveCharacter")
         and not model:GetAttribute("ProtectFromPlayers")
 end
@@ -107,16 +107,20 @@ for _, player in ipairs(Players:GetPlayers()) do
 end
 
 CollectionService:GetInstanceAddedSignal("NPC"):Connect(function(npc)
-    print("GOT NOT FULL MAIL")
-    print("IsDescendantOf:", npc:IsDescendantOf(workspace))
-    print("IsA Model:", npc:IsA("Model"))
-    print("Has HumanoidRootPart:", npc:FindFirstChild("HumanoidRootPart"))
-    print("Has ActiveCharacter tag:", CollectionService:HasTag(npc, "ActiveCharacter"))
-    print("Has ProtectFromPlayers attribute:", npc:GetAttribute("ProtectFromPlayers"))
+    local function tryPatch()
+        if Hitbox.Enabled and Hitbox.TargetNPC and IsValidNPC(npc) then
+            Hitbox:UpdateHitbox(npc)
+        end
+    end
 
-    if Hitbox.Enabled and Hitbox.TargetNPC and IsValidNPC(npc) then
-        print("GOT NEW MAIL")
-        Hitbox:UpdateHitbox(npc)
+    tryPatch()
+
+    if not npc:FindFirstChild("HumanoidRootPart") then
+        npc.ChildAdded:Connect(function(child)
+            if child.Name == "HumanoidRootPart" then
+                tryPatch()
+            end
+        end)
     end
 end)
 
